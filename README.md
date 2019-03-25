@@ -6,3 +6,4 @@ Get notified when a crypto pairing hits a certain price.
 
 Technologies used: react, redux, semantic-ui, express, fcm, jwt, passport
 
+PWA features: Notifications, Add to Homescreen
