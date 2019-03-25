@@ -1,10 +1,11 @@
 {
 	"name": "alerts-for-binance-pwa-server",
-	"version": "1.0.0",
+	"version": "0.0.1",
 	"description": "",
 	"main": "server.js",
 	"scripts": {
 		"start": "node server.js",
+		"start-prod": "NODE_ENV=production node server.js",
 		"dev": "nodemon --inspect server.js"
 	},
 	"author": "",

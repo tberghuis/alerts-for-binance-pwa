@@ -3,6 +3,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const passport = require('passport');
+const path = require('path');
 
 const setupFetchAllCurrentPricesInterval = require('./binancepriceproxy').setupFetchAllCurrentPricesInterval;
 const processalerts = require('./processalerts');
@@ -27,11 +28,15 @@ app.use(bodyParser.json());
 app.use('/api/users', users);
 app.use('/api/alerts', alerts);
 
+if (process.env.NODE_ENV === 'production') {
+	app.use(express.static('../client/build'));
+	app.get('*', (req, res) => {
+		res.sendFile(path.resolve(__dirname, '..', 'client', 'build', 'index.html'));
+	});
+}
+
 // make sure allCurrentPrices is populated before serving a request
 setupFetchAllCurrentPricesInterval().then(() => {
 	app.listen(port, () => console.log(`Server listening on port ${port}`));
 	processalerts();
 });
-
-// TODO something to catch uncaught errors???
-// let pm2 restart the process, server error logging
