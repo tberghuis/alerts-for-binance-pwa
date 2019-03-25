@@ -32,7 +32,7 @@ const Navbar = (props) => (
 					</Header>
 				)}
 			</Menu.Item>
-			{/* this makes .navbar-header centered */}
+			{/* this makes .navbar-header centered, could have used :after on menu container */}
 			<div className="menu-right" />
 		</Menu>
 	</div>
