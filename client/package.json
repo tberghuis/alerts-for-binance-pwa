@@ -1,6 +1,6 @@
 {
-	"name": "react-pwa-push-test",
-	"version": "0.1.0",
+	"name": "alerts-for-binance-pwa-client",
+	"version": "0.0.1",
 	"private": true,
 	"dependencies": {
 		"axios": "^0.18.0",
