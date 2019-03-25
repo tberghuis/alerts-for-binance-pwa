@@ -1,0 +1,6 @@
+
+// couldn't think of simple way to do at build / webpack time with CRA
+
+firebase.initializeApp({
+	messagingSenderId: 'REPLACE ME'
+});

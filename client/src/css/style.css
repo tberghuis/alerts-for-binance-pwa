@@ -1,0 +1,50 @@
+
+.radio {
+	margin-right: 25px;
+}
+
+.menu {
+	margin-bottom: 30px !important;
+	border: 0 !important;
+}
+
+.burger-menu {
+	padding: 0 !important;
+	padding-top: 8px !important;
+	padding-bottom: 8px !important;
+	
+}
+.burger-menu i {
+	height: 30px;
+	line-height: 30px; 
+	font-size: 30px;
+}
+.menu-left,
+.menu-right {
+	min-width: 50px !important;
+	max-width: 50px !important;
+	width: 50px !important;
+}
+
+.menu a.item {
+	flex: 1 !important;
+}
+.navbar-header {
+	margin-left: auto;
+	margin-right: auto;
+}
+
+a.big-link,
+span.big-link {
+	position: relative;
+	cursor: pointer;
+}
+a.big-link:before,
+span.big-link:before {
+	position: absolute;
+	content: '';
+	top: -7px;
+	right: -7px;
+	left: -7px;
+	bottom: -7px;
+}

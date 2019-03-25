@@ -1,0 +1,6 @@
+node_modules
+secret.*
+
+.env
+.env.dev
+.env.prod

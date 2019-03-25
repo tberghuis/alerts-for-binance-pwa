@@ -1,0 +1,25 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        // this caused major cpu spike and memory leaks
+        // {
+        //     "type": "node",
+        //     "request": "launch",
+        //     "name": "nodemon",
+        //     "runtimeExecutable": "nodemon",
+        //     "program": "${workspaceFolder}/server.js",
+        //     "restart": true,
+        //     "console": "internalConsole",
+        //     "internalConsoleOptions": "openOnFirstSessionStart"
+        // },
+
+        {
+            "type": "node",
+            "request": "attach",
+            "name": "Node: Nodemon",
+            "processId": "${command:PickProcess}",
+            "restart": true,
+            "protocol": "inspector",
+        }
+    ]
+}
