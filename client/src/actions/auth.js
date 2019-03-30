@@ -4,6 +4,7 @@ import axios from 'axios';
 import history from '../history';
 import jwt_decode from 'jwt-decode';
 import { requestNotificationPermission } from '../configureNotifications';
+import uuid from 'uuid/v4';
 
 export function login(token) {
 	localStorage.setItem('jwtToken', token);
@@ -37,4 +38,21 @@ export function loginIfLocalStorageToken() {
 		return;
 	}
 	login(localStorage.jwtToken);
+}
+
+// call from landing page
+export async function loginAnon() {
+	if (!localStorage.anonUuid) {
+		// get uuid and save to storage
+		localStorage.setItem('anonUuid', uuid());
+	}
+
+	// axios post login-anon
+	try {
+		const res = await axios.post('/api/users/login-anon', { anonUuid: localStorage.anonUuid });
+		login(res.data.token);
+	} catch (resErr) {
+		console.log('resErr', resErr);
+		console.log('resErr.response', resErr.response);
+	}
 }

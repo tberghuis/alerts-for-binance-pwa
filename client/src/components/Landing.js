@@ -2,6 +2,7 @@ import React from 'react';
 import { Button, Header } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
+import { loginAnon } from '../actions/auth';
 
 const Landing = (props) => {
 	return (
@@ -15,6 +16,9 @@ const Landing = (props) => {
 				<Button as={Link} to="/register">
 					Sign-up
 				</Button>
+			</p>
+			<p>
+				<Button onClick={loginAnon}>Anonymously Sign-in</Button>
 			</p>
 			<p>
 				{props.showInstallButton && (

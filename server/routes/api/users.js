@@ -3,6 +3,8 @@ const router = express.Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const passport = require('passport');
+const isEmpty = require('lodash/isEmpty');
+const isNil = require('lodash/isNil');
 
 const validateRegisterInput = require('../../validation/register');
 const validateLoginInput = require('../../validation/login');
@@ -39,7 +41,7 @@ router.post('/register', (req, res) => {
 	});
 });
 
-// @route   GET api/users/login
+// @route   POST api/users/login
 // @desc    Login User / Returning JWT Token
 // @access  Public
 router.post('/login', (req, res) => {
@@ -75,6 +77,37 @@ router.post('/login', (req, res) => {
 			}
 		});
 	});
+});
+
+// @route   POST api/users/login-anon
+// @desc    Login Anon User / Returning JWT Token
+// @access  Public
+router.post('/login-anon', async (req, res) => {
+	const anonUuid = req.body.anonUuid;
+	// validate anonUuid
+	// check exists
+	if (isNil(anonUuid) || isEmpty(anonUuid)) {
+		return res.status(400).json();
+	}
+	try {
+		let user = await User.findOne({ anonUuid }).exec();
+		if (!user) {
+			// create a fresh user
+			const anonUser = new User({
+				anonUuid
+			});
+			user = await anonUser.save();
+		}
+		const payload = { id: user.id }; // Create JWT Payload
+		jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRY }, (err, token) => {
+			res.json({
+				success: true,
+				token: 'bearer ' + token
+			});
+		});
+	} catch (error) {
+		console.log('error', error);
+	}
 });
 
 // @route   POST api/users/notification-token
