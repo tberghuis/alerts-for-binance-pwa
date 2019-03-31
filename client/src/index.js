@@ -5,13 +5,11 @@ import { store } from './store';
 import App from './components/App';
 import { Router } from 'react-router-dom';
 import history from './history';
-import { loginIfLocalStorageToken } from './actions/auth';
 import { setupOnTokenRefresh } from './configureNotifications';
 
 import 'semantic-ui-css/semantic.min.css';
 import './css/style.css';
 
-loginIfLocalStorageToken();
 setupOnTokenRefresh();
 
 render(

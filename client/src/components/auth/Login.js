@@ -3,9 +3,8 @@ import { Header, Label, Input, Grid, Form, Button } from 'semantic-ui-react';
 import isEmpty from 'lodash/isEmpty';
 import trim from 'lodash/trim';
 import axios from 'axios';
-import { login } from '../../actions/auth';
 
-export default function Login({ history }) {
+export default function Login({ login, history }) {
 	const [ formErrors, setFormErrors ] = useState({});
 	const [ emailRef, setEmailRef ] = useState(null);
 	const [ passwordRef, setPasswordRef ] = useState(null);
@@ -32,6 +31,7 @@ export default function Login({ history }) {
 
 		const userData = { email, password };
 
+		// TODO move this to action
 		try {
 			const res = await axios.post('/api/users/login', userData);
 			login(res.data.token);

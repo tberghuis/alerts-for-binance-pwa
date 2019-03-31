@@ -1,20 +1,33 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Header } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
-import { loginAnon } from '../actions/auth';
 
 let beforeinstallpromptEvent = null;
 
-export default function Landing() {
+export default function Landing({ loginAnon }) {
 	const [ showInstallHomescreen, setShowInstallHomescreen ] = useState(false);
+
+	const handleInstallHomescreen = () => {
+		beforeinstallpromptEvent.prompt();
+		beforeinstallpromptEvent.userChoice.then((choiceResult) => {
+			if (choiceResult.outcome === 'accepted') {
+				setShowInstallHomescreen(false);
+			}
+		});
+	};
+
+	const handleBeforeinstallprompt = (e) => {
+		e.preventDefault();
+		beforeinstallpromptEvent = e;
+		setShowInstallHomescreen(true);
+	};
 
 	// run on didMount
 	useEffect(() => {
-		window.addEventListener('beforeinstallprompt', (e) => {
-			e.preventDefault();
-			beforeinstallpromptEvent = e;
-			setShowInstallHomescreen(true);
-		});
+		window.addEventListener('beforeinstallprompt', handleBeforeinstallprompt);
+		return () => {
+			window.removeEventListener('beforeinstallprompt', handleBeforeinstallprompt);
+		};
 	}, []);
 
 	return (
@@ -34,18 +47,7 @@ export default function Landing() {
 			</p>
 			<p>
 				{showInstallHomescreen && (
-					<Button
-						onClick={() => {
-							beforeinstallpromptEvent.prompt();
-							beforeinstallpromptEvent.userChoice.then((choiceResult) => {
-								if (choiceResult.outcome === 'accepted') {
-									setShowInstallHomescreen(false);
-								}
-							});
-						}}
-					>
-						Add shortcut to home screen / desktop
-					</Button>
+					<Button onClick={handleInstallHomescreen}>Add shortcut to home screen / desktop</Button>
 				)}
 			</p>
 		</div>

@@ -1,10 +1,21 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { Button, Responsive, Table, Header, Icon } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
 import { removeAlert, fetchAlerts } from '../actions/alerts';
 
 const AlertsList = (props) => {
+	console.log('AlertsList props', props);
+
+	useEffect(
+		() => {
+			if (props.authState==='LOGGED_IN') {
+				fetchAlerts();
+			}
+		},
+		[ props.authState ]
+	);
+
 	const alertTable = (alertType) => {
 		const priceChangeStyle = { color: alertType === 'BUY' ? '#e15241' : '#43aa05' };
 		// filter by alertType

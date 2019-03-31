@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Route } from 'react-router-dom';
 import Login from './auth/Login';
 import Register from './auth/Register';
@@ -7,30 +7,44 @@ import Landing from './Landing';
 import AlertsList from './AlertsList';
 import AddAlert from './AddAlert';
 import { Container } from 'semantic-ui-react';
-import { fetchAlerts } from '../actions/alerts';
+import authActions from '../actions/auth';
 
-class App extends Component {
-	render() {
-		return (
-			<div>
-				<Container>
-					<Navbar />
-					<Route exact path="/" component={Landing} />
-					<Route exact path="/register" component={Register} />
-					<Route exact path="/login" component={Login} />
-					<Route
-						exact
-						path="/alertslist"
-						render={() => {
-							fetchAlerts();
-							return <AlertsList />;
-						}}
-					/>
-					<Route exact path="/addalert" component={AddAlert} />
-				</Container>
-			</div>
-		);
-	}
+export default function App() {
+	const [ authState, setAuthState ] = useState('LOGGED_OUT');
+	const { loginWithToken, logout, loginIfLocalStorageToken, loginAnon } = authActions(setAuthState);
+
+	useEffect(() => {
+		loginIfLocalStorageToken();
+	}, []);
+
+	return (
+		<div>
+			<Container>
+				<Navbar authState={authState} logout={logout} />
+				<Route
+					exact
+					path="/"
+					render={(routeProps) => {
+						return <Landing {...routeProps} loginAnon={loginAnon} />;
+					}}
+				/>
+				<Route exact path="/register" component={Register} />
+				<Route
+					exact
+					path="/login"
+					render={(routeProps) => {
+						return <Login {...routeProps} login={loginWithToken} />;
+					}}
+				/>
+				<Route
+					exact
+					path="/alertslist"
+					render={() => {
+						return <AlertsList authState={authState} />;
+					}}
+				/>
+				<Route exact path="/addalert" component={AddAlert} />
+			</Container>
+		</div>
+	);
 }
-
-export default App;

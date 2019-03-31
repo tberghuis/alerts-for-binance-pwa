@@ -43,6 +43,7 @@ export default function Register({ history }) {
 
 		const userData = { email, password, password2 };
 
+		// TODO move this to action
 		try {
 			await axios.post('/api/users/register', userData);
 			history.push('/login');
