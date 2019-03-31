@@ -1,36 +1,32 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import { Header, Label, Input, Grid, Form, Button } from 'semantic-ui-react';
 import isEmpty from 'lodash/isEmpty';
 import trim from 'lodash/trim';
 import axios from 'axios';
 import { login } from '../../actions/auth';
 
-class Login extends Component {
-	state = {
-		formErrors: {}
-	};
+export default function Login({ history }) {
+	const [ formErrors, setFormErrors ] = useState({});
+	const [ emailRef, setEmailRef ] = useState(null);
+	const [ passwordRef, setPasswordRef ] = useState(null);
 
-	handleSubmit = async (e) => {
+	const handleSubmit = async (e) => {
 		e.preventDefault();
 
-		const email = trim(this.email.inputRef.current.value);
-		const password = this.password.inputRef.current.value;
+		const email = trim(emailRef.inputRef.current.value);
+		const password = passwordRef.inputRef.current.value;
 		// vaildate form
 		let formErrors = {};
 
 		if (email === '') {
 			formErrors.email = 'Please enter your email';
 		}
-		// this is fail server side anyway
-		// else if (!Isemail.validate(email)) {
-		// 	formErrors.email = 'Please enter a valid email';
-		// }
 
 		if (password === '') {
 			formErrors.password = 'Please enter a password';
 		}
 		if (!isEmpty(formErrors)) {
-			this.setState({ formErrors });
+			setFormErrors(formErrors);
 			return;
 		}
 
@@ -44,50 +40,43 @@ class Login extends Component {
 			console.log('resErr.response', resErr.response);
 			// server validation failed, email already exists
 			formErrors = resErr.response.data;
-			// this.setState({ formErrors });
-			this.setState({ formErrors });
+			setFormErrors(formErrors);
 		}
 	};
 
-	render() {
-		return (
-			<Grid centered>
-				<Grid.Row>
-					<Grid.Column mobile={16} tablet={8}>
-						<Header textAlign="center" as="h1">
-							Sign in
-						</Header>
-						<Form noValidate onSubmit={this.handleSubmit}>
-							<Form.Field error={!!this.state.formErrors.email}>
-								<label>Email</label>
-								<Input
-									ref={(input) => (this.email = input)}
-									icon="user"
-									iconPosition="left"
-									placeholder="Email"
-								/>
-								{!!this.state.formErrors.email && <Label pointing>{this.state.formErrors.email}</Label>}
-							</Form.Field>
-							<Form.Field error={!!this.state.formErrors.password}>
-								<label>Password</label>
-								<Input
-									ref={(input) => (this.password = input)}
-									type="password"
-									icon="lock"
-									iconPosition="left"
-									placeholder="Password"
-								/>
-								{!!this.state.formErrors.password && (
-									<Label pointing>{this.state.formErrors.password}</Label>
-								)}
-							</Form.Field>
-							<Button>Sign-in</Button>
-						</Form>
-					</Grid.Column>
-				</Grid.Row>
-			</Grid>
-		);
-	}
+	return (
+		<Grid centered>
+			<Grid.Row>
+				<Grid.Column mobile={16} tablet={8}>
+					<Header textAlign="center" as="h1">
+						Sign in
+					</Header>
+					<Form noValidate onSubmit={handleSubmit}>
+						<Form.Field error={!!formErrors.email}>
+							<label>Email</label>
+							<Input
+								ref={(input) => setEmailRef(input)}
+								icon="user"
+								iconPosition="left"
+								placeholder="Email"
+							/>
+							{!!formErrors.email && <Label pointing>{formErrors.email}</Label>}
+						</Form.Field>
+						<Form.Field error={!!formErrors.password}>
+							<label>Password</label>
+							<Input
+								ref={(input) => setPasswordRef(input)}
+								type="password"
+								icon="lock"
+								iconPosition="left"
+								placeholder="Password"
+							/>
+							{!!formErrors.password && <Label pointing>{formErrors.password}</Label>}
+						</Form.Field>
+						<Button>Sign-in</Button>
+					</Form>
+				</Grid.Column>
+			</Grid.Row>
+		</Grid>
+	);
 }
-
-export default Login;
