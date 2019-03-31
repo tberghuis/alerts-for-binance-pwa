@@ -1,10 +1,22 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, Header } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
-import { connect } from 'react-redux';
 import { loginAnon } from '../actions/auth';
 
-const Landing = (props) => {
+let beforeinstallpromptEvent = null;
+
+export default function Landing() {
+	const [ showInstallHomescreen, setShowInstallHomescreen ] = useState(false);
+
+	// run on didMount
+	useEffect(() => {
+		window.addEventListener('beforeinstallprompt', (e) => {
+			e.preventDefault();
+			beforeinstallpromptEvent = e;
+			setShowInstallHomescreen(true);
+		});
+	}, []);
+
 	return (
 		<div style={{ textAlign: 'center' }}>
 			<Header as="h1">Alerts for Binance</Header>
@@ -21,21 +33,14 @@ const Landing = (props) => {
 				<Button onClick={loginAnon}>Anonymously Sign-in</Button>
 			</p>
 			<p>
-				{props.showInstallButton && (
+				{showInstallHomescreen && (
 					<Button
 						onClick={() => {
-							window.beforeinstallpromptEvent.prompt();
-							// Wait for the user to respond to the prompt
-							window.beforeinstallpromptEvent.userChoice.then((choiceResult) => {
+							beforeinstallpromptEvent.prompt();
+							beforeinstallpromptEvent.userChoice.then((choiceResult) => {
 								if (choiceResult.outcome === 'accepted') {
-									// console.log('User accepted the A2HS prompt');
-									props.dispatch({ type: 'HIDE_INSTALL_HOMESCREEN' });
-								} else {
-									// console.log('User dismissed the A2HS prompt');
+									setShowInstallHomescreen(false);
 								}
-								// not betting error on next click because maybe
-								// chrome is firing new beforeinstallprompt after i cancel?
-								window.beforeinstallpromptEvent = null;
 							});
 						}}
 					>
@@ -45,10 +50,4 @@ const Landing = (props) => {
 			</p>
 		</div>
 	);
-};
-
-const mapStateToProps = (state) => ({
-	showInstallButton: state.homescreen.showInstallButton
-});
-
-export default connect(mapStateToProps)(Landing);
+}
