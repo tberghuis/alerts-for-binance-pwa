@@ -1,7 +1,5 @@
 import React from 'react';
 import { render } from 'react-dom';
-import { Provider } from 'react-redux';
-import { store } from './store';
 import App from './components/App';
 import { Router } from 'react-router-dom';
 import history from './history';
@@ -13,10 +11,8 @@ import './css/style.css';
 setupOnTokenRefresh();
 
 render(
-	<Provider store={store}>
-		<Router history={history}>
-			<App />
-		</Router>
-	</Provider>,
+	<Router history={history}>
+		<App />
+	</Router>,
 	document.getElementById('root')
 );

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useReducer } from 'react';
 import { Route } from 'react-router-dom';
 import Login from './auth/Login';
 import Register from './auth/Register';
@@ -8,8 +8,12 @@ import AlertsList from './AlertsList';
 import AddAlert from './AddAlert';
 import { Container } from 'semantic-ui-react';
 import authActions from '../actions/auth';
+import getAlertsActionHandlers from '../actions/alerts';
+import alertsListReducer from '../reducers/alertsList';
 
 export default function App() {
+	const [ alertsState, alertsDispatch ] = useReducer(alertsListReducer, []);
+	const alertsActions = getAlertsActionHandlers(alertsDispatch);
 	const [ authState, setAuthState ] = useState('LOGGED_OUT');
 	const { loginWithToken, logout, loginIfLocalStorageToken, loginAnon } = authActions(setAuthState);
 
@@ -40,10 +44,24 @@ export default function App() {
 					exact
 					path="/alertslist"
 					render={() => {
-						return <AlertsList authState={authState} />;
+						return (
+							<AlertsList alertsState={alertsState} alertsActions={alertsActions} authState={authState} />
+						);
 					}}
 				/>
-				<Route exact path="/addalert" component={AddAlert} />
+				<Route
+					exact
+					path="/addalert"
+					render={(routeProps) => {
+						return (
+							<AddAlert
+								{...routeProps}
+								addAlert={alertsActions.addAlert}
+								alertsDispatch={alertsDispatch}
+							/>
+						);
+					}}
+				/>
 			</Container>
 		</div>
 	);

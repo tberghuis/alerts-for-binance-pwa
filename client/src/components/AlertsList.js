@@ -1,15 +1,15 @@
 import React, { useEffect } from 'react';
-import { connect } from 'react-redux';
 import { Button, Responsive, Table, Header, Icon } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
-import { removeAlert, fetchAlerts } from '../actions/alerts';
 
 const AlertsList = (props) => {
-	console.log('AlertsList props', props);
+	// console.log('AlertsList props', props);
+	const { removeAlert, fetchAlerts } = props.alertsActions;
+	const alertsList = props.alertsState;
 
 	useEffect(
 		() => {
-			if (props.authState==='LOGGED_IN') {
+			if (props.authState === 'LOGGED_IN') {
 				fetchAlerts();
 			}
 		},
@@ -19,7 +19,7 @@ const AlertsList = (props) => {
 	const alertTable = (alertType) => {
 		const priceChangeStyle = { color: alertType === 'BUY' ? '#e15241' : '#43aa05' };
 		// filter by alertType
-		const filteredAlertsList = props.alertsList
+		const filteredAlertsList = alertsList
 			.filter((a) => a.alertType === alertType)
 			.map((a) => {
 				a.change = +parseFloat((a.price / a.currentPrice - 1) * 100).toFixed(2);
@@ -105,8 +105,4 @@ const AlertsList = (props) => {
 	);
 };
 
-const mapStateToProps = (state) => ({
-	alertsList: state.alertsList
-});
-
-export default connect(mapStateToProps)(AlertsList);
+export default AlertsList;

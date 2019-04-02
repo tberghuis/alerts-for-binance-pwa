@@ -1,35 +1,35 @@
-import React from 'react';
+import React, { useState, useRef } from 'react';
 import { Button, Label, Header, Form, Radio } from 'semantic-ui-react';
-import { connect } from 'react-redux';
 import trim from 'lodash/trim';
 import isEmpty from 'lodash/isEmpty';
-import axios from 'axios';
 
-class AddAlert extends React.Component {
-	state = {
-		formErrors: {}
-	};
+const AddAlert = (props) => {
+	const [ formErrors, setFormErrors ] = useState({});
+	const [ alertType, setAlertType ] = useState(null);
 
-	alertTypeClickHandler = (e, { value }) => {
-		this.setState({ alertType: value });
-	};
-
-	handleSubmit = async (e) => {
+	const pairingRef = useRef();
+	const priceRef = useRef();
+	
+	const handleSubmit = async (e) => {
 		e.preventDefault();
+		// console.log('handleSubmit');
+		const pairing = trim(pairingRef.current.value.toUpperCase());
+		const price = Number(trim(priceRef.current.value));
+		// console.log('pairing', pairing);
+		// console.log('price', price);
 
-		const pairing = trim(this.pairing.value.toUpperCase());
-		const price = Number(trim(this.price.value));
 		// validate form
 		let formErrors = {};
 
 		// validate pairing
 		// check not empty
 		if (pairing === '') {
+			console.log('pairing empty', pairing);
 			formErrors.pairing = 'Please enter a Pairing Symbol';
 		}
 
 		// validate price
-		if (trim(this.price.value) === '') {
+		if (trim(priceRef.current.value) === '') {
 			formErrors.price = 'Please enter a Price';
 		}
 		// check is number
@@ -38,75 +38,71 @@ class AddAlert extends React.Component {
 		}
 
 		// validate alertType
-		if (!this.state.alertType) {
+		if (!alertType) {
 			formErrors.alertType = 'Please select alert type';
 		}
 
 		if (!isEmpty(formErrors)) {
-			this.setState({ formErrors });
+			// console.log('formErrors', formErrors);
+			setFormErrors(formErrors);
 			return;
 		}
 
 		const alertData = {
 			pairing,
 			price,
-			alertType: this.state.alertType
+			alertType
 		};
 
 		try {
-			const res = await axios.post('/api/alerts/new', alertData);
-			this.props.dispatch({ type: 'ALERTS_LIST_ADD', payload: res.data.alert });
-			this.props.history.push('/alertslist');
+			await props.addAlert(alertData);
+			props.history.push('/alertslist');
 		} catch (resErr) {
-			console.log('resErr', resErr);
-			console.log('resErr.response', resErr.response);
 			// server validation failed, either, bad pairing symbol
 			// or alertType + price not make sense for current price
-			formErrors = resErr.response.data;
-			this.setState({ formErrors });
+			if (resErr.response) {
+				setFormErrors(resErr.response.data);
+			}
 		}
 	};
 
-	render() {
-		return (
-			<React.Fragment>
-				<Header textAlign="center" as="h2">
-					Add Alert
-				</Header>
-				<Form noValidate onSubmit={this.handleSubmit}>
-					<Form.Field error={!!this.state.formErrors.pairing}>
-						{/* TODO make this autocomplete */}
-						<label>Pairing Symbol</label>
-						<input ref={(input) => (this.pairing = input)} placeholder="e.g. BTCUSDT" />
-						{!!this.state.formErrors.pairing && <Label pointing>{this.state.formErrors.pairing}</Label>}
-					</Form.Field>
-					<Form.Field error={!!this.state.formErrors.price}>
-						<label>Price</label>
-						<input ref={(input) => (this.price = input)} placeholder="e.g. 4000" />
-						{!!this.state.formErrors.price && <Label pointing>{this.state.formErrors.price}</Label>}
-					</Form.Field>
-					<Form.Field error={!!this.state.formErrors.alertType}>
-						<Radio
-							label="Buy"
-							name="radioGroup"
-							value="BUY"
-							checked={this.state.alertType === 'BUY'}
-							onChange={this.alertTypeClickHandler}
-						/>
-						<Radio
-							label="Sell"
-							name="radioGroup"
-							value="SELL"
-							checked={this.state.alertType === 'SELL'}
-							onChange={this.alertTypeClickHandler}
-						/>
-						{!!this.state.formErrors.alertType && <Label pointing>{this.state.formErrors.alertType}</Label>}
-					</Form.Field>
-					<Button>Add to alerts</Button>
-				</Form>
-			</React.Fragment>
-		);
-	}
-}
+	return (
+		<React.Fragment>
+			<Header textAlign="center" as="h2">
+				Add Alert
+			</Header>
+			<Form noValidate onSubmit={handleSubmit}>
+				<Form.Field error={!!formErrors.pairing}>
+					<label>Pairing Symbol</label>
+					<input ref={pairingRef} placeholder="e.g. BTCUSDT" />
+					{!!formErrors.pairing && <Label pointing>{formErrors.pairing}</Label>}
+				</Form.Field>
+				<Form.Field error={!!formErrors.price}>
+					<label>Price</label>
+					<input ref={priceRef} placeholder="e.g. 4000" />
+					{!!formErrors.price && <Label pointing>{formErrors.price}</Label>}
+				</Form.Field>
+				<Form.Field error={!!formErrors.alertType}>
+					<Radio
+						label="Buy"
+						name="radioGroup"
+						value="BUY"
+						checked={alertType === 'BUY'}
+						onChange={() => setAlertType('BUY')}
+					/>
+					<Radio
+						label="Sell"
+						name="radioGroup"
+						value="SELL"
+						checked={alertType === 'SELL'}
+						onChange={() => setAlertType('SELL')}
+					/>
+					{!!formErrors.alertType && <Label pointing>{formErrors.alertType}</Label>}
+				</Form.Field>
+				<Button>Add to alerts</Button>
+			</Form>
+		</React.Fragment>
+	);
+};
 
-export default connect()(AddAlert);
+export default AddAlert;
