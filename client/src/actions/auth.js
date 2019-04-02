@@ -14,6 +14,12 @@ export default function authActions(setAuthState) {
 			history.push('/alertslist');
 		}
 	}
+
+	async function login(userData) {
+		const res = await axios.post('/api/users/login', userData);
+		loginWithToken(res.data.token);
+	}
+
 	function logout() {
 		delete axios.defaults.headers.common['Authorization'];
 		localStorage.removeItem('jwtToken');
@@ -53,5 +59,5 @@ export default function authActions(setAuthState) {
 		}
 	}
 
-	return { loginWithToken, logout, loginIfLocalStorageToken, loginAnon };
+	return { login, logout, loginIfLocalStorageToken, loginAnon };
 }

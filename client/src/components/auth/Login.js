@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Header, Label, Input, Grid, Form, Button } from 'semantic-ui-react';
 import isEmpty from 'lodash/isEmpty';
 import trim from 'lodash/trim';
-import axios from 'axios';
 
 export default function Login({ login, history }) {
 	const [ formErrors, setFormErrors ] = useState({});
@@ -33,14 +32,14 @@ export default function Login({ login, history }) {
 
 		// TODO move this to action
 		try {
-			const res = await axios.post('/api/users/login', userData);
-			login(res.data.token);
+			await login(userData);
 		} catch (resErr) {
 			console.log('resErr', resErr);
-			console.log('resErr.response', resErr.response);
 			// server validation failed, email already exists
-			formErrors = resErr.response.data;
-			setFormErrors(formErrors);
+			if (resErr.response) {
+				console.log('resErr.response', resErr.response);
+				setFormErrors(resErr.response.data);
+			}
 		}
 	};
 

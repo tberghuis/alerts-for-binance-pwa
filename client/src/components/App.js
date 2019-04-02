@@ -15,7 +15,7 @@ export default function App() {
 	const [ alertsState, alertsDispatch ] = useReducer(alertsListReducer, []);
 	const alertsActions = getAlertsActionHandlers(alertsDispatch);
 	const [ authState, setAuthState ] = useState('LOGGED_OUT');
-	const { loginWithToken, logout, loginIfLocalStorageToken, loginAnon } = authActions(setAuthState);
+	const { login, logout, loginIfLocalStorageToken, loginAnon } = authActions(setAuthState);
 
 	useEffect(() => {
 		loginIfLocalStorageToken();
@@ -37,7 +37,7 @@ export default function App() {
 					exact
 					path="/login"
 					render={(routeProps) => {
-						return <Login {...routeProps} login={loginWithToken} />;
+						return <Login {...routeProps} login={login} />;
 					}}
 				/>
 				<Route
