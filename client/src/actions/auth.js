@@ -15,6 +15,7 @@ export default function authActions(setAuthState) {
 		}
 	}
 
+	// let component catch 400 errors
 	async function login(userData) {
 		const res = await axios.post('/api/users/login', userData);
 		loginWithToken(res.data.token);
