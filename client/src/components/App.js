@@ -29,7 +29,7 @@ export default function App() {
 					exact
 					path="/"
 					render={(routeProps) => {
-						return <Landing {...routeProps} loginAnon={loginAnon} />;
+						return <Landing logout={logout} authState={authState} {...routeProps} loginAnon={loginAnon} />;
 					}}
 				/>
 				<Route exact path="/register" component={Register} />

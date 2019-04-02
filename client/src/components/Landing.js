@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 
 let beforeinstallpromptEvent = null;
 
-export default function Landing({ loginAnon }) {
+export default function Landing({ logout, loginAnon, authState }) {
 	const [ showInstallHomescreen, setShowInstallHomescreen ] = useState(false);
 
 	const handleInstallHomescreen = () => {
@@ -34,17 +34,31 @@ export default function Landing({ loginAnon }) {
 		<div style={{ textAlign: 'center' }}>
 			<Header as="h1">Alerts for Binance</Header>
 			<p>Get real time cryptocurrency price alerts as a notification.</p>
-			<p>
-				<Button style={{ marginRight: '20px' }} as={Link} to="/login">
-					Sign-in
-				</Button>
-				<Button as={Link} to="/register">
-					Sign-up
-				</Button>
-			</p>
-			<p>
-				<Button onClick={loginAnon}>Anonymously Sign-in</Button>
-			</p>
+			{authState === 'LOGGED_OUT' ? (
+				<React.Fragment>
+					<p>
+						<Button style={{ marginRight: '20px' }} as={Link} to="/login">
+							Sign-in
+						</Button>
+						<Button as={Link} to="/register">
+							Sign-up
+						</Button>
+					</p>
+					<p>
+						<Button onClick={loginAnon}>Anonymously Sign-in</Button>
+					</p>
+				</React.Fragment>
+			) : (
+				<p>
+					<Button style={{ marginRight: '20px' }} onClick={logout}>
+						Log out
+					</Button>
+					<Button as={Link} to="/alertslist">
+						Alerts
+					</Button>
+				</p>
+			)}
+
 			<p>
 				{showInstallHomescreen && (
 					<Button onClick={handleInstallHomescreen}>Add shortcut to home screen / desktop</Button>
