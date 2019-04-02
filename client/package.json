@@ -10,10 +10,10 @@
 		"lodash": "^4.17.11",
 		"react": "^16.8.4",
 		"react-dom": "^16.8.4",
-		"react-redux": "^6.0.1",
+
 		"react-router-dom": "^5.0.0",
 		"react-scripts": "2.1.8",
-		"redux": "^4.0.1",
+
 		"semantic-ui-css": "^2.4.1",
 		"semantic-ui-react": "^0.86.0"
 	},
@@ -26,11 +26,6 @@
 	"eslintConfig": {
 		"extends": "react-app"
 	},
-	"browserslist": [
-		">0.2%",
-		"not dead",
-		"not ie <= 11",
-		"not op_mini all"
-	],
+	"browserslist": [ ">0.2%", "not dead", "not ie <= 11", "not op_mini all" ],
 	"proxy": "http://localhost:5050"
 }
