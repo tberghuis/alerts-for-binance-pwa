@@ -1,24 +1,26 @@
 import React, { useState, useRef } from "react";
-import { Button, Label, Header, Form, Radio } from "semantic-ui-react";
+import { Button, Label, Header, Form, Radio, Input } from "semantic-ui-react";
 import trim from "lodash/trim";
 import isEmpty from "lodash/isEmpty";
 import PairingInput from "./PairingInput";
+import axios from "axios";
+import math from "mathjs";
 
 const AddAlert = props => {
   const [formErrors, setFormErrors] = useState({});
   const [alertType, setAlertType] = useState(null);
-  const [pairingSymbol, setPairingSymbol] = useState('');
+  const [pairingSymbol, setPairingSymbol] = useState("");
 
   // const pairingRef = useRef();
   const priceRef = useRef();
 
   const handleSubmit = async e => {
     e.preventDefault();
-    
-    // const pairing = trim(pairingRef.current.value.toUpperCase());
+
     const pairing = pairingSymbol;
-    const price = Number(trim(priceRef.current.value));
-    
+    const priceString = trim(priceRef.current.inputRef.current.value);
+    const price = Number(math.eval(priceString));
+
     // validate form
     let formErrors = {};
 
@@ -30,7 +32,7 @@ const AddAlert = props => {
     }
 
     // validate price
-    if (trim(priceRef.current.value) === "") {
+    if (priceString === "") {
       formErrors.price = "Please enter a Price";
     }
     // check is number
@@ -67,6 +69,19 @@ const AddAlert = props => {
     }
   };
 
+  const handleClickCurrentPrice = async () => {
+    try {
+      const res = await axios.get(`/api/price/${pairingSymbol}`);
+      console.log("res", res);
+      // update price input
+      priceRef.current.inputRef.current.value = res.data.price;
+      // give focus
+      priceRef.current.inputRef.current.focus();
+    } catch (error) {
+      console.log("error", error);
+    }
+  };
+
   return (
     <React.Fragment>
       <Header textAlign="center" as="h2">
@@ -75,13 +90,25 @@ const AddAlert = props => {
       <Form noValidate onSubmit={handleSubmit}>
         <Form.Field error={!!formErrors.pairing}>
           <label>Pairing Symbol</label>
-          {/* <input ref={pairingRef} placeholder="e.g. BTCUSDT" /> */}
           <PairingInput setPairingSymbol={setPairingSymbol} />
           {!!formErrors.pairing && <Label pointing>{formErrors.pairing}</Label>}
         </Form.Field>
         <Form.Field error={!!formErrors.price}>
           <label>Price</label>
-          <input ref={priceRef} placeholder="e.g. 4000" />
+          <div style={{ display: "flex" }}>
+            <Input
+              ref={priceRef}
+              placeholder="Enter Price (can perform math e.g. PRICE * 1.05 for 5% price increase)"
+            />
+            <Button
+              onClick={handleClickCurrentPrice}
+              type="button"
+              style={{ whiteSpace: "nowrap" }}
+            >
+              Current Price
+            </Button>
+          </div>
+
           {!!formErrors.price && <Label pointing>{formErrors.price}</Label>}
         </Form.Field>
         <Form.Field error={!!formErrors.alertType}>

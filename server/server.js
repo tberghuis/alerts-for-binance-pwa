@@ -13,6 +13,7 @@ const app = express();
 const users = require('./routes/api/users');
 const alerts = require('./routes/api/alerts');
 const pairings = require('./routes/api/pairings');
+const price = require('./routes/api/price');
 
 const port = process.env.PORT || 5050;
 
@@ -29,6 +30,7 @@ app.use(bodyParser.json());
 app.use('/api/users', users);
 app.use('/api/alerts', alerts);
 app.use('/api/pairings', pairings);
+app.use('/api/price', price);
 
 if (process.env.NODE_ENV === 'production') {
 	app.use(express.static('../client/build'));

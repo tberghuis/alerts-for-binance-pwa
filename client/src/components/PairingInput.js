@@ -5,13 +5,11 @@ import { Dropdown } from "semantic-ui-react";
 const PairingInput = ({ setPairingSymbol }) => {
   const [dropdownOptions, setDropdownOptions] = useState([]);
   const [filteredDropdownOptions, setFilteredDropdownOptions] = useState([]);
-  // const [inputValue, setInputValue] = useState("");
 
   useEffect(() => {
     (async () => {
       try {
         const res = await axios.get("/api/pairings");
-        // console.log("res", res);
         const options = res.data.sort().map(pair => ({
           key: pair,
           value: pair,
@@ -26,8 +24,6 @@ const PairingInput = ({ setPairingSymbol }) => {
   }, []);
 
   const onSearchChange = (event, data) => {
-    // console.log("event", event);
-    // console.log("data", data);
     if (!data.searchQuery || data.searchQuery.trim() === "") {
       setFilteredDropdownOptions(dropdownOptions);
       return;
@@ -41,9 +37,6 @@ const PairingInput = ({ setPairingSymbol }) => {
   };
 
   const onChange = (event, data) => {
-    // console.log("event", event);
-    // console.log("data", data);
-    // setInputValue(data.value);
     setPairingSymbol(data.value);
   };
 
