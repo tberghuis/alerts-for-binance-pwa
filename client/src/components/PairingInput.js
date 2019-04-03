@@ -1,8 +1,8 @@
 import axios from "axios";
 import React, { useState, useEffect } from "react";
-import { Dropdown, Divider } from "semantic-ui-react";
+import { Dropdown } from "semantic-ui-react";
 
-const PairingInput = ({setPairingSymbol}) => {
+const PairingInput = ({ setPairingSymbol }) => {
   const [dropdownOptions, setDropdownOptions] = useState([]);
   const [filteredDropdownOptions, setFilteredDropdownOptions] = useState([]);
   // const [inputValue, setInputValue] = useState("");
@@ -11,7 +11,7 @@ const PairingInput = ({setPairingSymbol}) => {
     (async () => {
       try {
         const res = await axios.get("/api/pairings");
-        // console.log("res", res);      
+        // console.log("res", res);
         const options = res.data.sort().map(pair => ({
           key: pair,
           value: pair,
